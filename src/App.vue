@@ -2,6 +2,11 @@
   <div id="app">
     <div class="vegas-background"></div>
     
+    <!-- Money Rain - Full Screen -->
+    <div v-if="!bankerMode" class="money-rain">
+      <div class="money-emoji" v-for="n in 20" :key="n" :style="getMoneyStyle(n)">💰</div>
+    </div>
+    
     <div class="container">
       <!-- Title -->
       <div class="title">
@@ -169,6 +174,16 @@ export default {
       window.removeEventListener('keypress', handleKeyPress);
     });
 
+    const getMoneyStyle = (n) => {
+      // Random positioning and animation delay for each emoji
+      return {
+        left: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 5}s`,
+        animationDuration: `${8 + Math.random() * 4}s`,
+        fontSize: `${2 + Math.random() * 1.5}rem`
+      };
+    };
+
     return {
       bankerMode,
       players,
@@ -177,7 +192,8 @@ export default {
       exitBankerMode,
       handleRegister,
       handleWithdraw,
-      handleDeposit
+      handleDeposit,
+      getMoneyStyle
     };
   }
 }
