@@ -105,16 +105,48 @@ export default {
 .leaderboard-header h2 {
   font-size: 2.5rem;
   margin: 0;
-  color: #D4AF37;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  letter-spacing: 2px;
+  color: #FFD700;
+  text-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.8),
+    0 0 20px rgba(255, 215, 0, 0.6),
+    0 0 30px rgba(255, 140, 0, 0.4),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 3px;
+  animation: titlePulse 3s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 .subtitle {
-  color: #FFD700;
+  color: #FF00FF;
   font-size: 1.2rem;
   margin: 10px 0 0 0;
   font-style: italic;
+  text-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.8),
+    0 0 20px rgba(255, 0, 255, 0.4);
+  animation: subtitleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes subtitleGlow {
+  from {
+    text-shadow: 
+      0 0 10px rgba(255, 0, 255, 0.8),
+      0 0 20px rgba(255, 0, 255, 0.4);
+  }
+  to {
+    text-shadow: 
+      0 0 15px rgba(255, 0, 255, 1),
+      0 0 30px rgba(255, 0, 255, 0.6),
+      0 0 40px rgba(255, 0, 255, 0.3);
+  }
 }
 
 .empty-state {
@@ -133,23 +165,50 @@ export default {
 .player-card {
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   border: 2px solid #D4AF37;
   border-radius: 15px;
   padding: 20px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .player-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(212, 175, 55, 0.4),
+    0 0 30px rgba(212, 175, 55, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: #FFD700;
 }
 
 .player-card.top-player {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(255, 215, 0, 0.1));
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(255, 215, 0, 0.2));
   border-color: #FFD700;
   border-width: 3px;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  box-shadow: 
+    0 6px 20px rgba(255, 215, 0, 0.5),
+    0 0 40px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: topPlayerGlow 2s ease-in-out infinite;
+}
+
+@keyframes topPlayerGlow {
+  0%, 100% {
+    box-shadow: 
+      0 6px 20px rgba(255, 215, 0, 0.5),
+      0 0 40px rgba(255, 215, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 8px 30px rgba(255, 215, 0, 0.7),
+      0 0 60px rgba(255, 215, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
 }
 
 .rank {

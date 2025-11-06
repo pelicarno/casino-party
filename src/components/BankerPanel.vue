@@ -27,9 +27,16 @@
       <div class="card">
         <h3>Withdraw Money</h3>
         <form @submit.prevent="handleWithdraw">
+          <input 
+            v-model="withdrawSearch" 
+            type="text" 
+            placeholder="Search player..." 
+            class="input-field search-field"
+            @input="withdrawPlayerId = ''"
+          />
           <select v-model="withdrawPlayerId" required class="input-field">
             <option value="">Select Player</option>
-            <option v-for="player in players" :key="player.id" :value="player.id">
+            <option v-for="player in filteredWithdrawPlayers" :key="player.id" :value="player.id">
               {{ player.name }} - ${{ player.balance }}
             </option>
           </select>
@@ -51,9 +58,16 @@
       <div class="card">
         <h3>Deposit Money</h3>
         <form @submit.prevent="handleDeposit">
+          <input 
+            v-model="depositSearch" 
+            type="text" 
+            placeholder="Search player..." 
+            class="input-field search-field"
+            @input="depositPlayerId = ''"
+          />
           <select v-model="depositPlayerId" required class="input-field">
             <option value="">Select Player</option>
-            <option v-for="player in players" :key="player.id" :value="player.id">
+            <option v-for="player in filteredDepositPlayers" :key="player.id" :value="player.id">
               {{ player.name }} - ${{ player.balance }}
             </option>
           </select>
@@ -127,12 +141,14 @@ export default {
       withdrawAmount: '',
       withdrawError: '',
       withdrawSuccess: '',
+      withdrawSearch: '',
       
       // Deposit form
       depositPlayerId: '',
       depositAmount: '',
       depositError: '',
-      depositSuccess: ''
+      depositSuccess: '',
+      depositSearch: ''
     }
   },
   computed: {
@@ -140,6 +156,20 @@ export default {
       return [...this.transactions]
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
         .slice(0, 10);
+    },
+    filteredWithdrawPlayers() {
+      if (!this.withdrawSearch) return this.players;
+      const search = this.withdrawSearch.toLowerCase();
+      return this.players.filter(player => 
+        player.name.toLowerCase().includes(search)
+      );
+    },
+    filteredDepositPlayers() {
+      if (!this.depositSearch) return this.players;
+      const search = this.depositSearch.toLowerCase();
+      return this.players.filter(player => 
+        player.name.toLowerCase().includes(search)
+      );
     }
   },
   methods: {
@@ -238,8 +268,30 @@ export default {
 .banker-header h2 {
   font-size: 2rem;
   margin: 0;
-  color: #D4AF37;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: #FF00FF;
+  text-shadow: 
+    0 0 10px rgba(255, 0, 255, 0.8),
+    0 0 20px rgba(255, 0, 255, 0.6),
+    0 0 30px rgba(255, 0, 255, 0.4),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  animation: bankerPulse 2s ease-in-out infinite;
+}
+
+@keyframes bankerPulse {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(255, 0, 255, 0.8),
+      0 0 20px rgba(255, 0, 255, 0.6),
+      0 0 30px rgba(255, 0, 255, 0.4),
+      2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow: 
+      0 0 15px rgba(255, 0, 255, 1),
+      0 0 30px rgba(255, 0, 255, 0.8),
+      0 0 45px rgba(255, 0, 255, 0.6),
+      2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
 }
 
 .close-btn {
@@ -266,18 +318,36 @@ export default {
 }
 
 .card {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   border: 2px solid #D4AF37;
   border-radius: 15px;
   padding: 25px;
   backdrop-filter: blur(10px);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(212, 175, 55, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 25px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(212, 175, 55, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .card h3 {
-  color: #FFD700;
+  color: #00FFFF;
   margin: 0 0 20px 0;
   font-size: 1.3rem;
   text-align: center;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.6),
+    0 0 20px rgba(0, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .input-field {
@@ -299,6 +369,16 @@ export default {
 
 .input-field::placeholder {
   color: rgba(255, 255, 255, 0.5);
+}
+
+.search-field {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(100, 200, 255, 0.5);
+}
+
+.search-field:focus {
+  border-color: #64c8ff;
+  box-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
 }
 
 .btn {

@@ -3,8 +3,8 @@
     <div class="vegas-background"></div>
     
     <div class="container">
-      <!-- Title - Triple click to enter banker mode -->
-      <div class="title" @click="handleTitleClick">
+      <!-- Title -->
+      <div class="title">
         <h1>Vegas Nights</h1>
         <p class="tagline">Casino Banking System</p>
       </div>
@@ -51,8 +51,6 @@ export default {
     const players = ref([]);
     const transactions = ref([]);
     const loading = ref(false);
-    const clickCount = ref(0);
-    const clickTimer = ref(null);
     const refreshInterval = ref(null);
     const secretCode = ref('');
     const secretTimer = ref(null);
@@ -65,21 +63,6 @@ export default {
         transactions.value = data.transactions || [];
       } catch (error) {
         console.error('Failed to load data:', error);
-      }
-    };
-
-    // Handle triple-click on title
-    const handleTitleClick = () => {
-      clickCount.value++;
-      
-      if (clickCount.value === 1) {
-        clickTimer.value = setTimeout(() => {
-          clickCount.value = 0;
-        }, 500);
-      } else if (clickCount.value === 3) {
-        clearTimeout(clickTimer.value);
-        clickCount.value = 0;
-        toggleBankerMode();
       }
     };
 
@@ -180,9 +163,6 @@ export default {
       if (refreshInterval.value) {
         clearInterval(refreshInterval.value);
       }
-      if (clickTimer.value) {
-        clearTimeout(clickTimer.value);
-      }
       if (secretTimer.value) {
         clearTimeout(secretTimer.value);
       }
@@ -194,7 +174,6 @@ export default {
       players,
       transactions,
       loading,
-      handleTitleClick,
       exitBankerMode,
       handleRegister,
       handleWithdraw,
@@ -229,15 +208,10 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    180deg,
-    #1a0e3e 0%,
-    #2d1b4e 20%,
-    #4a2c5e 40%,
-    #ff6b35 70%,
-    #ffa07a 85%,
-    #ffd700 100%
-  );
+  background-image: url('/img/invite.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   z-index: -1;
 }
 
@@ -249,17 +223,68 @@ html, body {
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 80% 50%, rgba(212, 175, 55, 0.2) 0%, transparent 50%);
-  animation: pulse 8s ease-in-out infinite;
+    linear-gradient(
+      180deg,
+      rgba(26, 14, 62, 0.85) 0%,
+      rgba(45, 27, 78, 0.8) 20%,
+      rgba(74, 44, 94, 0.75) 40%,
+      rgba(255, 107, 53, 0.65) 70%,
+      rgba(255, 160, 122, 0.6) 85%,
+      rgba(255, 215, 0, 0.55) 100%
+    );
+  z-index: 1;
 }
 
-@keyframes pulse {
+.vegas-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255, 0, 150, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(0, 255, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+  animation: neonPulse 4s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes neonPulse {
   0%, 100% {
     opacity: 1;
+    transform: scale(1);
   }
   50% {
     opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes neonGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(255, 215, 0, 0.8),
+      0 0 20px rgba(255, 215, 0, 0.6),
+      0 0 30px rgba(255, 215, 0, 0.4),
+      0 0 40px rgba(255, 140, 0, 0.3);
+  }
+  50% {
+    text-shadow: 
+      0 0 20px rgba(255, 215, 0, 1),
+      0 0 30px rgba(255, 215, 0, 0.8),
+      0 0 40px rgba(255, 215, 0, 0.6),
+      0 0 50px rgba(255, 140, 0, 0.5),
+      0 0 60px rgba(255, 140, 0, 0.3);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 
@@ -268,50 +293,50 @@ html, body {
   margin: 0 auto;
   padding: 20px;
   position: relative;
-  z-index: 1;
+  z-index: 10;
 }
 
 .title {
   text-align: center;
   margin-bottom: 40px;
-  cursor: pointer;
-  user-select: none;
   padding: 20px;
-  transition: transform 0.2s;
-}
-
-.title:active {
-  transform: scale(0.98);
+  user-select: none;
 }
 
 .title h1 {
   font-size: 4rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 4px;
+  color: #FFD700;
+  letter-spacing: 8px;
   margin-bottom: 10px;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: neonGlow 2s ease-in-out infinite, float 3s ease-in-out infinite;
+  text-transform: uppercase;
+  font-family: 'Impact', 'Arial Black', sans-serif;
 }
 
-@keyframes shimmer {
-  0%, 100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.2);
-  }
-}
 
 .tagline {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #00FFFF;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  font-weight: 300;
+  letter-spacing: 4px;
+  font-weight: 400;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.8),
+    0 0 20px rgba(0, 255, 255, 0.5);
+  animation: neonFlicker 3s infinite;
+}
+
+@keyframes neonFlicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  92%, 94%, 96% {
+    opacity: 0.7;
+  }
+  93%, 95% {
+    opacity: 1;
+  }
 }
 
 .main-view,
