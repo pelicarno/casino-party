@@ -1,5 +1,10 @@
 <template>
   <div class="leaderboard">
+    <!-- Money Rain Background -->
+    <div class="money-rain">
+      <div class="money-emoji" v-for="n in 15" :key="n" :style="getMoneyStyle(n)">💰</div>
+    </div>
+    
     <div class="leaderboard-header">
       <h2>🎰 Vegas Nights Leaderboard 🎰</h2>
       <p class="subtitle">High Rollers of the Night</p>
@@ -67,6 +72,15 @@ export default {
     },
     updateTime() {
       this.lastUpdated = this.getFormattedTime();
+    },
+    getMoneyStyle(n) {
+      // Random positioning and animation delay for each emoji
+      return {
+        left: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 5}s`,
+        animationDuration: `${8 + Math.random() * 4}s`,
+        fontSize: `${1.5 + Math.random() * 1}rem`
+      };
     }
   },
   watch: {
@@ -78,8 +92,8 @@ export default {
     }
   },
   mounted() {
-    // Update time every second
-    this.timer = setInterval(this.updateTime, 1000);
+    // Update time every 5 seconds (better performance)
+    this.timer = setInterval(this.updateTime, 5000);
   },
   beforeUnmount() {
     if (this.timer) {
@@ -95,11 +109,47 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+}
+
+.money-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.money-emoji {
+  position: absolute;
+  top: -50px;
+  opacity: 0.15;
+  animation: fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  0% {
+    top: -50px;
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(20px) rotate(180deg);
+  }
+  100% {
+    top: 100vh;
+    transform: translateX(-20px) rotate(360deg);
+  }
 }
 
 .leaderboard-header {
   text-align: center;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 .leaderboard-header h2 {
@@ -160,6 +210,8 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  position: relative;
+  z-index: 1;
 }
 
 .player-card {
@@ -249,6 +301,8 @@ export default {
   margin-top: 30px;
   color: rgba(212, 175, 55, 0.7);
   font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* Mobile responsive */

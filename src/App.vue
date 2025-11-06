@@ -144,7 +144,7 @@ export default {
       }
     };
 
-    // Setup auto-refresh (every 5 seconds)
+    // Setup auto-refresh (every 10 seconds for better performance)
     onMounted(() => {
       loadData();
       
@@ -153,7 +153,7 @@ export default {
         if (!bankerMode.value && !loading.value) {
           loadData();
         }
-      }, 5000);
+      }, 10000);
       
       // Listen for keyboard input for secret code
       window.addEventListener('keypress', handleKeyPress);

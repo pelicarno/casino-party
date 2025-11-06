@@ -27,19 +27,30 @@
       <div class="card">
         <h3>Withdraw Money</h3>
         <form @submit.prevent="handleWithdraw">
-          <input 
-            v-model="withdrawSearch" 
-            type="text" 
-            placeholder="Search player..." 
-            class="input-field search-field"
-            @input="withdrawPlayerId = ''"
-          />
-          <select v-model="withdrawPlayerId" required class="input-field">
-            <option value="">Select Player</option>
-            <option v-for="player in filteredWithdrawPlayers" :key="player.id" :value="player.id">
-              {{ player.name }} - ${{ player.balance }}
-            </option>
-          </select>
+          <div class="player-search-container">
+            <input 
+              v-model="withdrawSearch" 
+              type="text" 
+              placeholder="Search and select player..." 
+              class="input-field search-field"
+              @focus="withdrawShowList = true"
+              @blur="hideWithdrawList"
+            />
+            <div v-if="withdrawShowList && filteredWithdrawPlayers.length > 0" class="player-list">
+              <div 
+                v-for="player in filteredWithdrawPlayers" 
+                :key="player.id"
+                class="player-list-item"
+                @mousedown="selectWithdrawPlayer(player)"
+              >
+                <span class="player-list-name">{{ player.name }}</span>
+                <span class="player-list-balance">${{ player.balance.toLocaleString() }}</span>
+              </div>
+            </div>
+            <div v-if="selectedWithdrawPlayer" class="selected-player">
+              ✓ {{ selectedWithdrawPlayer.name }} - ${{ selectedWithdrawPlayer.balance.toLocaleString() }}
+            </div>
+          </div>
           <input 
             v-model.number="withdrawAmount" 
             type="number" 
@@ -48,7 +59,7 @@
             required
             class="input-field"
           />
-          <button type="submit" class="btn btn-warning">Withdraw</button>
+          <button type="submit" class="btn btn-warning" :disabled="!selectedWithdrawPlayer">Withdraw</button>
         </form>
         <p v-if="withdrawError" class="error">{{ withdrawError }}</p>
         <p v-if="withdrawSuccess" class="success">{{ withdrawSuccess }}</p>
@@ -58,19 +69,30 @@
       <div class="card">
         <h3>Deposit Money</h3>
         <form @submit.prevent="handleDeposit">
-          <input 
-            v-model="depositSearch" 
-            type="text" 
-            placeholder="Search player..." 
-            class="input-field search-field"
-            @input="depositPlayerId = ''"
-          />
-          <select v-model="depositPlayerId" required class="input-field">
-            <option value="">Select Player</option>
-            <option v-for="player in filteredDepositPlayers" :key="player.id" :value="player.id">
-              {{ player.name }} - ${{ player.balance }}
-            </option>
-          </select>
+          <div class="player-search-container">
+            <input 
+              v-model="depositSearch" 
+              type="text" 
+              placeholder="Search and select player..." 
+              class="input-field search-field"
+              @focus="depositShowList = true"
+              @blur="hideDepositList"
+            />
+            <div v-if="depositShowList && filteredDepositPlayers.length > 0" class="player-list">
+              <div 
+                v-for="player in filteredDepositPlayers" 
+                :key="player.id"
+                class="player-list-item"
+                @mousedown="selectDepositPlayer(player)"
+              >
+                <span class="player-list-name">{{ player.name }}</span>
+                <span class="player-list-balance">${{ player.balance.toLocaleString() }}</span>
+              </div>
+            </div>
+            <div v-if="selectedDepositPlayer" class="selected-player">
+              ✓ {{ selectedDepositPlayer.name }} - ${{ selectedDepositPlayer.balance.toLocaleString() }}
+            </div>
+          </div>
           <input 
             v-model.number="depositAmount" 
             type="number" 
@@ -79,7 +101,7 @@
             required
             class="input-field"
           />
-          <button type="submit" class="btn btn-success">Deposit</button>
+          <button type="submit" class="btn btn-success" :disabled="!selectedDepositPlayer">Deposit</button>
         </form>
         <p v-if="depositError" class="error">{{ depositError }}</p>
         <p v-if="depositSuccess" class="success">{{ depositSuccess }}</p>
@@ -137,18 +159,20 @@ export default {
       registerSuccess: '',
       
       // Withdraw form
-      withdrawPlayerId: '',
       withdrawAmount: '',
       withdrawError: '',
       withdrawSuccess: '',
       withdrawSearch: '',
+      withdrawShowList: false,
+      selectedWithdrawPlayer: null,
       
       // Deposit form
-      depositPlayerId: '',
       depositAmount: '',
       depositError: '',
       depositSuccess: '',
-      depositSearch: ''
+      depositSearch: '',
+      depositShowList: false,
+      selectedDepositPlayer: null
     }
   },
   computed: {
@@ -190,15 +214,32 @@ export default {
       }
     },
     
+    selectWithdrawPlayer(player) {
+      this.selectedWithdrawPlayer = player;
+      this.withdrawSearch = player.name;
+      this.withdrawShowList = false;
+    },
+    
+    hideWithdrawList() {
+      setTimeout(() => {
+        this.withdrawShowList = false;
+      }, 200);
+    },
+    
     async handleWithdraw() {
       this.withdrawError = '';
       this.withdrawSuccess = '';
       
+      if (!this.selectedWithdrawPlayer) {
+        this.withdrawError = 'Please select a player';
+        return;
+      }
+      
       try {
-        const player = this.players.find(p => p.id === this.withdrawPlayerId);
-        await this.$emit('withdraw', this.withdrawPlayerId, this.withdrawAmount);
-        this.withdrawSuccess = `${player.name} withdrew $${this.withdrawAmount}`;
-        this.withdrawPlayerId = '';
+        await this.$emit('withdraw', this.selectedWithdrawPlayer.id, this.withdrawAmount);
+        this.withdrawSuccess = `${this.selectedWithdrawPlayer.name} withdrew $${this.withdrawAmount}`;
+        this.selectedWithdrawPlayer = null;
+        this.withdrawSearch = '';
         this.withdrawAmount = '';
         
         setTimeout(() => {
@@ -209,15 +250,32 @@ export default {
       }
     },
     
+    selectDepositPlayer(player) {
+      this.selectedDepositPlayer = player;
+      this.depositSearch = player.name;
+      this.depositShowList = false;
+    },
+    
+    hideDepositList() {
+      setTimeout(() => {
+        this.depositShowList = false;
+      }, 200);
+    },
+    
     async handleDeposit() {
       this.depositError = '';
       this.depositSuccess = '';
       
+      if (!this.selectedDepositPlayer) {
+        this.depositError = 'Please select a player';
+        return;
+      }
+      
       try {
-        const player = this.players.find(p => p.id === this.depositPlayerId);
-        await this.$emit('deposit', this.depositPlayerId, this.depositAmount);
-        this.depositSuccess = `${player.name} deposited $${this.depositAmount}`;
-        this.depositPlayerId = '';
+        await this.$emit('deposit', this.selectedDepositPlayer.id, this.depositAmount);
+        this.depositSuccess = `${this.selectedDepositPlayer.name} deposited $${this.depositAmount}`;
+        this.selectedDepositPlayer = null;
+        this.depositSearch = '';
         this.depositAmount = '';
         
         setTimeout(() => {
@@ -381,6 +439,68 @@ export default {
   box-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
 }
 
+.player-search-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.player-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #64c8ff;
+  border-radius: 8px;
+  margin-top: 5px;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.player-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+}
+
+.player-list-item:last-child {
+  border-bottom: none;
+}
+
+.player-list-item:hover {
+  background: rgba(100, 200, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.player-list-name {
+  color: white;
+  font-weight: 500;
+  flex: 1;
+}
+
+.player-list-balance {
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.selected-player {
+  padding: 10px 15px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  color: #4CAF50;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
 .btn {
   width: 100%;
   padding: 12px;
@@ -394,9 +514,14 @@ export default {
   letter-spacing: 1px;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-primary {
