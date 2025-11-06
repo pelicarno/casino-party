@@ -1,0 +1,89 @@
+🎰 VEGAS NIGHTS CASINO BANKING - QUICK START 🎰
+
+==============================================================================
+STEP 1: SET UP JSONBIN.IO (5 minutes)
+==============================================================================
+
+1. Go to: https://jsonbin.io
+2. Sign up for free account
+3. Create a new bin with this data:
+   {
+     "players": [],
+     "transactions": []
+   }
+4. Copy your API Key and Bin ID
+
+==============================================================================
+STEP 2: CONFIGURE YOUR APP
+==============================================================================
+
+Create a file called .env in the casino-party folder with:
+
+VITE_JSONBIN_API_KEY=your_api_key_here
+VITE_BIN_ID=your_bin_id_here
+
+(Replace with your actual values from JSONBin.io)
+
+==============================================================================
+STEP 3: RUN LOCALLY
+==============================================================================
+
+npm install
+npm run dev
+
+Open: http://localhost:5173
+
+Test:
+- Triple-click "Vegas Nights" title to enter banker mode
+- Register a test player
+- Try withdraw/deposit
+
+==============================================================================
+STEP 4: DEPLOY TO VERCEL (Optional)
+==============================================================================
+
+1. Push code to GitHub:
+   git add .
+   git commit -m "Vegas Nights Casino App"
+   git push
+
+2. Go to: https://vercel.com
+3. Import your GitHub repo
+4. Add environment variables:
+   - VITE_JSONBIN_API_KEY
+   - VITE_BIN_ID
+5. Deploy!
+
+==============================================================================
+BANKER MODE ACCESS
+==============================================================================
+
+Two ways to enter banker mode:
+1. Triple-click the "Vegas Nights" title
+2. Type "BANKER" on your keyboard
+
+From banker mode you can:
+- Register new players ($500 each)
+- Process withdrawals
+- Process deposits
+- View transaction history
+
+==============================================================================
+PARTY DAY CHECKLIST
+==============================================================================
+
+□ Test banker mode access
+□ Register a test player and verify it works
+□ Share the URL with guests
+□ Optional: Display leaderboard on a big screen
+□ Have fun! 🎰
+
+==============================================================================
+
+For detailed instructions, see SETUP.md
+For full documentation, see README.md
+
+Questions? Check the browser console (F12) for errors.
+
+Ready to roll! 🎲
+
