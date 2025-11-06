@@ -1,5 +1,6 @@
 // JSONBin.io API integration
-const API_KEY = import.meta.env.VITE_JSONBIN_API_KEY;
+// Using Access Key for better security (X-Access-Key instead of X-Master-Key)
+const ACCESS_KEY = import.meta.env.VITE_JSONBIN_ACCESS_KEY;
 const BIN_ID = import.meta.env.VITE_BIN_ID;
 const BASE_URL = 'https://api.jsonbin.io/v3';
 
@@ -12,11 +13,11 @@ const defaultData = {
 // Get all data from JSONBin
 export async function getData() {
   // Debug: Check if env variables are loaded
-  if (!API_KEY || !BIN_ID) {
+  if (!ACCESS_KEY || !BIN_ID) {
     console.error('❌ JSONBin credentials missing!');
-    console.error('API_KEY:', API_KEY ? '✓ Set' : '❌ Missing');
+    console.error('ACCESS_KEY:', ACCESS_KEY ? '✓ Set' : '❌ Missing');
     console.error('BIN_ID:', BIN_ID ? '✓ Set' : '❌ Missing');
-    console.error('Make sure .env file exists with VITE_JSONBIN_API_KEY and VITE_BIN_ID');
+    console.error('Make sure .env file exists with VITE_JSONBIN_ACCESS_KEY and VITE_BIN_ID');
     return defaultData;
   }
   
@@ -24,7 +25,7 @@ export async function getData() {
     console.log('🔄 Fetching data from JSONBin...');
     const response = await fetch(`${BASE_URL}/b/${BIN_ID}/latest`, {
       headers: {
-        'X-Master-Key': API_KEY,
+        'X-Access-Key': ACCESS_KEY,
       }
     });
     
@@ -45,7 +46,7 @@ export async function getData() {
 
 // Update data in JSONBin
 export async function updateData(data) {
-  if (!API_KEY || !BIN_ID) {
+  if (!ACCESS_KEY || !BIN_ID) {
     console.error('❌ Cannot update: JSONBin credentials missing!');
     throw new Error('JSONBin credentials not configured');
   }
@@ -56,7 +57,7 @@ export async function updateData(data) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY,
+        'X-Access-Key': ACCESS_KEY,
       },
       body: JSON.stringify(data)
     });
