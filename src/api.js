@@ -11,7 +11,17 @@ const defaultData = {
 
 // Get all data from JSONBin
 export async function getData() {
+  // Debug: Check if env variables are loaded
+  if (!API_KEY || !BIN_ID) {
+    console.error('❌ JSONBin credentials missing!');
+    console.error('API_KEY:', API_KEY ? '✓ Set' : '❌ Missing');
+    console.error('BIN_ID:', BIN_ID ? '✓ Set' : '❌ Missing');
+    console.error('Make sure .env file exists with VITE_JSONBIN_API_KEY and VITE_BIN_ID');
+    return defaultData;
+  }
+  
   try {
+    console.log('🔄 Fetching data from JSONBin...');
     const response = await fetch(`${BASE_URL}/b/${BIN_ID}/latest`, {
       headers: {
         'X-Master-Key': API_KEY,
@@ -19,20 +29,29 @@ export async function getData() {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to fetch data');
+      const errorText = await response.text();
+      console.error('❌ JSONBin API Error:', response.status, errorText);
+      throw new Error(`Failed to fetch data: ${response.status}`);
     }
     
     const result = await response.json();
+    console.log('✅ Data loaded successfully:', result.record);
     return result.record || defaultData;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('❌ Error fetching data:', error);
     return defaultData;
   }
 }
 
 // Update data in JSONBin
 export async function updateData(data) {
+  if (!API_KEY || !BIN_ID) {
+    console.error('❌ Cannot update: JSONBin credentials missing!');
+    throw new Error('JSONBin credentials not configured');
+  }
+  
   try {
+    console.log('🔄 Updating JSONBin data...');
     const response = await fetch(`${BASE_URL}/b/${BIN_ID}`, {
       method: 'PUT',
       headers: {
@@ -43,12 +62,16 @@ export async function updateData(data) {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to update data');
+      const errorText = await response.text();
+      console.error('❌ JSONBin Update Error:', response.status, errorText);
+      throw new Error(`Failed to update data: ${response.status}`);
     }
     
-    return await response.json();
+    const result = await response.json();
+    console.log('✅ Data updated successfully');
+    return result;
   } catch (error) {
-    console.error('Error updating data:', error);
+    console.error('❌ Error updating data:', error);
     throw error;
   }
 }
