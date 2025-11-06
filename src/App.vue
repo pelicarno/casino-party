@@ -330,6 +330,38 @@ html, body {
   font-family: 'Impact', 'Arial Black', sans-serif;
 }
 
+.money-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.money-emoji {
+  position: absolute;
+  top: -50px;
+  opacity: 0.15;
+  animation: fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  0% {
+    top: -100px;
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(30px) rotate(180deg);
+  }
+  100% {
+    top: calc(100vh + 50px);
+    transform: translateX(-30px) rotate(360deg);
+  }
+}
 
 .tagline {
   font-size: 1.2rem;
